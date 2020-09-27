@@ -126,7 +126,15 @@
                 for (let i = 0; i <= diff; i++) {
                     let date = moment(first).add(i, "days").format("YYYY-MM-DD"),
                         datepi = moment(date).format("YYYYMMDD");
-                    datepi = this.piecer(this.piecer(datepi));
+
+                    console.log(datepi);
+                    if (datepi.toString().length > 1) datepi = this.piecer(datepi);
+                    if (datepi.toString().length > 1) datepi = this.piecer(datepi);
+                    if (datepi.toString().length > 1) datepi = this.piecer(datepi);
+                    if (datepi.toString().length > 1) datepi = this.piecer(datepi);
+
+                    console.log(datepi);
+
                     if (datepi === num) {
                         let month = this.monthNames[moment(date).format("MMMM")];
                         let day = this.dayNames[moment(date).format("dddd")];
