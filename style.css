@@ -1,0 +1,18 @@
+body {
+    background: #eee;
+}
+.list-group-item {
+    border: 0;
+    margin-bottom: 1rem;
+    border-radius: 0 !important;
+}
+
+input {
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+
+.btn[disabled] {
+    background: #d9d9d9 !important;
+    border-color: transparent;
+}

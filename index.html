@@ -7,25 +7,41 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>DT</title>
     <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
     <script src="vue.min.js"></script>
+    <script src="moment.min.js"></script>
 </head>
-<body style="background: #eee">
+<body>
 <div id="app">
     <div class="container">
         <div class="row">
-            <div class="col-12">
-                <input type="date" class="form-control my-3" v-model="first"/>
-                <input type="date" class="form-control my-3" v-model="last"/>
-                <div class="list-group mb-3">
-                    <a class="list-group-item list-group-item-action" v-for="(item, index) in person"
-                       :class="{'active': index === num-1}" @click="num=index+1">
-                        {{ item }}
-                    </a>
+            <div class="col-12 py-3">
+                <div v-if="page===1">
+                    <div class="list-group">
+                        <a class="list-group-item list-group-item-action" v-for="(item, index) in person"
+                           :class="{'active': index === num-1}" @click="num=index+1">
+                            {{ item }}
+                        </a>
+                    </div>
                 </div>
 
-                {{ num }},
-                {{ first }},
-                {{ last }}
+                <div v-if="page===2" class="pb-3">
+                    <input type="date" class="form-control mb-3" v-model="first"/>
+                    <input type="date" class="form-control" v-model="last"/>
+                </div>
+
+                <div class="px-4 pt-4 pb-2 mb-4 bg-white" v-if="page===3">
+                    <p v-for="item in results" v-text="item" v-if="results.length"/>
+                    <p else>Hiçbir tarih bulunamadı.</p>
+                </div>
+
+                <div class="my-3">
+                    <button class="btn btn-danger px-4" :disabled="page < 2" @click="page--">Geri</button>
+                    <button class="btn btn-primary position-absolute px-4"
+                            :disabled="page > 2 || ((page === 1 && num < 1) || (page === 2 && (!first || !last) ))"
+                            style="right:1rem" @click="page++">İlerle
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -48,6 +64,77 @@
             ],
             first: "",
             last: "",
+            results: [],
+            page: 1
+        },
+        computed: {
+            info() {
+                return {
+                    num: this.num,
+                    first: this.first,
+                    last: this.last
+                }
+            },
+            dayNames() {
+                return {
+                    Monday: "Pazartesi",
+                    Tuesday: "Salı",
+                    Wednesday: "Çarşamba",
+                    Thursday: "Perşembe",
+                    Friday: "Cuma",
+                    Saturday: "Cumartesi",
+                    Sunday: "Pazar"
+                }
+            },
+            monthNames() {
+                return {
+                    January: "Ocak",
+                    February: "Şubat",
+                    March: "Mart",
+                    April: "Nisan",
+                    May: "Mayıs",
+                    June: "Haziran",
+                    July: "Temmuz",
+                    August: "Ağustos",
+                    September: "Eylül",
+                    October: "Ekim",
+                    November: "Kasım",
+                    December: "Aralık"
+                }
+            }
+        },
+        methods: {
+            piecer(number) {
+                let result = number;
+
+                try {
+                    let total = 0, date = number.toString();
+                    date = date.split("");
+                    for (let key in date) total += parseInt(date[key]);
+                    result = total;
+                } catch (err) {
+                }
+
+                return result;
+            }
+        },
+        watch: {
+            info(val) {
+                this.results = [];
+                let first = moment(val.first), last = moment(val.last), num = val.num, diff = last.diff(first, 'days');
+
+                for (let i = 0; i <= diff; i++) {
+                    let date = moment(first).add(i, "days").format("YYYY-MM-DD"),
+                        datepi = moment(date).format("YYYYMMDD");
+                    datepi = this.piecer(this.piecer(datepi));
+                    if (datepi === num) {
+                        let month = this.monthNames[moment(date).format("MMMM")];
+                        let day = this.dayNames[moment(date).format("dddd")];
+                        let string = moment(date).format("DD") + " " + month + " " + moment(date).format("YYYY") + " " + day;
+                        this.results.push(string);
+                    }
+                }
+            }
         }
     })
 </script>
