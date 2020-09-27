@@ -32,7 +32,7 @@
 
                 <div class="px-4 pt-4 pb-2 mb-4 bg-white" v-if="page===3">
                     <p v-for="item in results" v-text="item" v-if="results.length"/>
-                    <p else>Hiçbir tarih bulunamadı.</p>
+                    <p v-else>Hiçbir tarih bulunamadı.</p>
                 </div>
 
                 <div class="my-3">
